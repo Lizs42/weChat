@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * 微信现金红包
+ * Class AngPao
+ */
 class AngPao extends WeChat {
 
     /**
