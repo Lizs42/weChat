@@ -92,6 +92,10 @@ public function angPaoData() {
 
 +    签名算法
 ```
+/**
+* 签名算法，生成微信请求参数：sign
+* @return string
+*/
 function getSign($data) {
    global $_W;
    ksort($data, SORT_STRING);
