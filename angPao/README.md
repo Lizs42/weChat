@@ -60,31 +60,31 @@ public function getRandom($length = 32) {
 
 +    整合请求发送的数据
 ```
-       /**
-       * 微信发送红包的请求数据（除了签名参数 sign）
-       * @return array
-       */
-      public function angPaoData() {
-         // 活动名称
-         $act_name = 'act_name';
-         // 备注
-         $remark = 'remark';
-         $data = array(
-            'nonce_str' => getRandom(32),
-            'mch_billno' => $mch_billno.date('YmdHis').rand(1000, 9999),
-            'mch_id' => $mch_billno, // 商户号
-            'wxappid' => $wxappid, // 公众号 appid
-            'send_name' => $send_name, // 商户名称
-            're_openid' => $open_id, // 用户 openid
-            'total_amount' => $total_amount, // 红包金额
-            'total_num' => 1, // 红包发放人数
-            'wishing' => $wishing, // 红包祝福语
-            'client_ip' => $client_ip, // 当前客户端 IP 地址
-            'act_name' => $act_name,
-            'remark' => $remark,
-         );
-         return $data;
-      }
+/**
+* 微信发送红包的请求数据（除了签名参数 sign）
+* @return array
+*/
+public function angPaoData() {
+ // 活动名称
+ $act_name = 'act_name';
+ // 备注
+ $remark = 'remark';
+ $data = array(
+    'nonce_str' => getRandom(32),
+    'mch_billno' => $mch_billno.date('YmdHis').rand(1000, 9999),
+    'mch_id' => $mch_billno, // 商户号
+    'wxappid' => $wxappid, // 公众号 appid
+    'send_name' => $send_name, // 商户名称
+    're_openid' => $open_id, // 用户 openid
+    'total_amount' => $total_amount, // 红包金额
+    'total_num' => 1, // 红包发放人数
+    'wishing' => $wishing, // 红包祝福语
+    'client_ip' => $client_ip, // 当前客户端 IP 地址
+    'act_name' => $act_name,
+    'remark' => $remark,
+ );
+ return $data;
+}
 ```
 
 +    签名算法
@@ -112,53 +112,53 @@ function getSign($data) {
 
 +    发送数据的时候，不要忘记了将数据转换成指定的 xml 格式
 ```
-    /**
-     * 将数据转换成符合传送要求的 xml 格式
-     * @param $data
-     * @return string
-     */
-    function array2xml($data) {
-       $xml = "<xml>";
-       foreach ($data as $k => $v) {
-          $xml .= "<" . $k . "><![CDATA[" . $v . "]]></" .$k . ">";
-       }
-       $xml .= "</xml>";
-       return $xml;
-    }
+/**
+ * 将数据转换成符合传送要求的 xml 格式
+ * @param $data
+ * @return string
+ */
+function array2xml($data) {
+   $xml = "<xml>";
+   foreach ($data as $k => $v) {
+      $xml .= "<" . $k . "><![CDATA[" . $v . "]]></" .$k . ">";
+   }
+   $xml .= "</xml>";
+   return $xml;
+}
 ```
 
 +    获取微信支付证书文件
 > 为了安全，一般将证书的内容保存到数据库中，使用的时候读取出来，保存到文件中去，用完之后，及时删除掉。
 
 ```
-       /**
-       * 获取微信支付文件：
-       * 1、apiclient_cert.pem
-       * 2、apiclient_key.pem
-       * 3、rootca.pem
-       */
-      public function getPayFile() {
-        // 从数据库中取出来
-         $sec = m('common')->getSec();
-         $certs = iunserializer($sec['sec']);
-         if (is_array($certs)) {
-            if (empty($certs['cert']) || empty($certs['key']) || empty($certs['root'])) {
-               message('未上传完整的微信支付证书，请到【系统设置】->【支付方式】中上传!', '', 'error');
-            }
-            $certfile = IA_ROOT . "/addons/sz_yi/cert/apiclient_cert.pem";
-            file_put_contents($certfile, $certs['cert']);
-            $keyfile = IA_ROOT . "/addons/sz_yi/cert/apiclient_key.pem";
-            file_put_contents($keyfile, $certs['key']);
-            $rootfile = IA_ROOT . "/addons/sz_yi/cert/rootca.pem";
-            file_put_contents($rootfile, $certs['root']);
-            $extras['CURLOPT_SSLCERT'] = $certfile;
-            $extras['CURLOPT_SSLKEY'] = $keyfile;
-            $extras['CURLOPT_CAINFO'] = $rootfile;
-         } else {
-            message('未上传完整的微信支付证书，请到【系统设置】->【支付方式】中上传!', '', 'error');
-         }
-         return @$extras ?: array();
-      }
+/**
+* 获取微信支付文件：
+* 1、apiclient_cert.pem
+* 2、apiclient_key.pem
+* 3、rootca.pem
+*/
+public function getPayFile() {
+// 从数据库中取出来
+ $sec = m('common')->getSec();
+ $certs = iunserializer($sec['sec']);
+ if (is_array($certs)) {
+    if (empty($certs['cert']) || empty($certs['key']) || empty($certs['root'])) {
+       message('未上传完整的微信支付证书，请到【系统设置】->【支付方式】中上传!', '', 'error');
+    }
+    $certfile = IA_ROOT . "/addons/sz_yi/cert/apiclient_cert.pem";
+    file_put_contents($certfile, $certs['cert']);
+    $keyfile = IA_ROOT . "/addons/sz_yi/cert/apiclient_key.pem";
+    file_put_contents($keyfile, $certs['key']);
+    $rootfile = IA_ROOT . "/addons/sz_yi/cert/rootca.pem";
+    file_put_contents($rootfile, $certs['root']);
+    $extras['CURLOPT_SSLCERT'] = $certfile;
+    $extras['CURLOPT_SSLKEY'] = $keyfile;
+    $extras['CURLOPT_CAINFO'] = $rootfile;
+ } else {
+    message('未上传完整的微信支付证书，请到【系统设置】->【支付方式】中上传!', '', 'error');
+ }
+ return @$extras ?: array();
+}
 ```
 
 +    用 CURL 发送数据
@@ -205,23 +205,23 @@ function curl_post_ssl($vars, $second=30, $aHeader=array())
 
 +    发送红包
 ```
-       /**
-       * 发送红包
-       * @return bool|mixed
-       */
-      public function angPaoPay() {
-         // 红包请求数据
-         $data = $this->angPaoData();
-         $data['sign'] = $this->getSign($data);
-         // 将数据转换成 xml 格式
-         $postXml = array2xml($data);
-         $responseXml = $this->curl_post_ssl($postXml);
-         // 为了证书安全，及时删掉
-         foreach ($this->getPayFile() as $file) {
-            unlink($file);
-         }
-         return $responseXml;
-      }
+/**
+* 发送红包
+* @return bool|mixed
+*/
+public function angPaoPay() {
+ // 红包请求数据
+ $data = $this->angPaoData();
+ $data['sign'] = $this->getSign($data);
+ // 将数据转换成 xml 格式
+ $postXml = array2xml($data);
+ $responseXml = $this->curl_post_ssl($postXml);
+ // 为了证书安全，及时删掉
+ foreach ($this->getPayFile() as $file) {
+    unlink($file);
+ }
+ return $responseXml;
+}
 ```
 
 
