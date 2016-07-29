@@ -28,7 +28,7 @@ class WeChat {
         $nonce_str = '';
         for ($i=0; $i<$length; $i++) {
             $random = rand(0, 61);
-            $c = $random < 10 ? rand(0, 9) : chr(rand(1, 26) + rand(0, 1)*32 + 64);
+            $c = $random < 10 ? rand(0, 9) : chr(rand(65, 90) + rand(0, 1)*32);
             $nonce_str .= $c;
         }
         return $nonce_str;
